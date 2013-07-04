@@ -4,7 +4,7 @@ $(document).ready(function() {
 		$('#content').html(scriptText);
 		hljs.initHighlightingOnLoad();
 	});
-	var scriptText = "<pre><code class=\"javascript\">"+data+"</code></pre>";
+	var scriptText = "<pre><code class=\"javascript\">"+response.responseText+"</code></pre>";
 	$('#content').html(scriptText);
 	hljs.initHighlightingOnLoad();
 });
