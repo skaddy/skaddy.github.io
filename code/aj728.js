@@ -4,4 +4,5 @@ $(document).ready(function() {
 		$('#content').html(scriptText);
 		hljs.initHighlightingOnLoad();
 	});
+	var test = 1;
 });
