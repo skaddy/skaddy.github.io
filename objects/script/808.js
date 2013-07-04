@@ -21,26 +21,21 @@ function curvedProfile(startAngle, finalAngle, startPoint, endPoint, radius, col
 	var round = ABS(finalAngle-startAngle);
 	var res = [];
 	var pos = startPoint;
-	console.log("SA "+startAngle+" FA "+finalAngle+" SP "+startPoint);
 	if(startAngle>finalAngle){
 		i=-startAngle;
 		while(i<=finalAngle){
-			console.log(pos);
 			pos = [pos[0]-ABS(SIN(i)),pos[1]-ABS(COS(i)),startPoint[2]]; 
 			res.push(hermiteCircle(radius,pos,i));
 			i+=round/steps;
 		}
-		console.log("["+(pos[0]-endPoint[0])+","+(pos[1]-endPoint[1])+","+(pos[2]-endPoint[2])+"]");
 		res.push(hermiteCircle(radius,[pos[0]-endPoint[0],pos[1]-endPoint[1],pos[2]-endPoint[2]],finalAngle));
 	}
 	else{
 		while(i>=(-finalAngle)){
-			console.log(pos);
 			pos = [pos[0]-ABS(SIN(i)),pos[1]-ABS(COS(i)),startPoint[2]]; 
 			res.push(hermiteCircle(radius,pos,i));
 			i-=round/steps;
 		}
-		console.log("["+(pos[0]-endPoint[0])+","+(pos[1]-endPoint[1])+","+(pos[2]-endPoint[2])+"]");
 		res.push(hermiteCircle(radius,[pos[0]-endPoint[0],pos[1]-endPoint[1],pos[2]-endPoint[2]],-finalAngle));
 	}
 	var struct = [];
@@ -64,6 +59,7 @@ function straightLeg(r, pos, h, color, foot, rot){
 	struct.push(COLOR(color)(MAP(BEZIER(S1)([c1[0],c2[0]]))(chassisDomain)));
 	struct.push(COLOR(color)(MAP(BEZIER(S1)([c1[1],c2[1]]))(chassisDomain)));
 	struct.push(COLOR(color)(MAP(BEZIER(S1)([c1[1],c1[0]]))(chassisDomain)));
+	struct.push(COLOR(color)(MAP(BEZIER(S1)([c2[1],c2[0]]))(chassisDomain)));
 
 	if(foot){
 		var c3 = hermiteCircle(r,[pos[0]+0.1,pos[1]+h+0.5,pos[2]+0.1],rot);
@@ -115,77 +111,71 @@ function stick(color){
 	struct.push(MAP(BEZIER(S1)([c2[0],c2[1]]))(springDomain));
 	return COLOR(color)(STRUCT(struct));
 }
-function parquet(){
-	var c1 = rgb01(114,66,38);
-	var c2 = rgb01(120,66,38);
-	var struct = [];
-	var c = 1;
-	for(var i = 0; i<30; i++){
-		var putBricks = 0;
-		var color;
-		while(putBricks<120){
-			if(c>0)
-				color = c1;
-			else
-				color = c2;
-			struct.push(COLOR(color)(T([0,1])([putBricks,i*4])(CUBOID([5,4,1]))));
-			putBricks+=5;
-			c = c*(-1);
-		}
-		c= c*(-1);
-	}
-	return STRUCT(struct);
-}
 
-var putParquet = false;
 var chassisDomain = PROD1x1([INTERVALS(1)(6),INTERVALS(1)(6)]);
-var springDomain = PROD1x1([INTERVALS(1)(6),INTERVALS(1)(6)]);
-if(putParquet)
-	springDomain = PROD1x1([INTERVALS(1)(5),INTERVALS(1)(5)]);
+var springDomain = PROD1x1([INTERVALS(1)(5),INTERVALS(1)(5)]);
 var springPieces = 80;
 var profileColor = rgb01(190,190,190);
 var stickColor = [0,0,0,1];
 var springColor = rgb01(160,160,160,1);
-
-var prof1 = straightLeg(4, [0,0,0], 70, profileColor, false, 0)
-var model = prof1;
-/*
-var profile1 = straightLeg(4, [2.8431242426624763,-2.656875757337522,40], 54, profileColor, false, PI/2);
-var profile2 = straightLeg(4, [2.8431242426624763,-2.656875757337522,-2], 54, profileColor, false, PI/2);
-var profile3 = curvedProfile(PI/2, 0,[3.8431242426624763,-2.656875757337522,40],[0,27,0],4,profileColor,5.0);
-var profile4 = curvedProfile(PI/2, 0,[3.8431242426624763,-2.656875757337522,-2],[0,27,0],4,profileColor,5.0);
-var profile5 = curvedProfile(0, PI/16, [0.1862484853249547,-32.31375151467505,40],[4,6,0],4,profileColor,5.0);
-var profile6 = curvedProfile(0, PI/16, [0.1862484853249547,-32.31375151467505,-2],[4,6,0],4,profileColor,5.0);
-var profile7 = T([0,1,2])([55,-12,42])(R([0,2])(PI/2)(curvedProfile(0, PI/3, [0,0,0],[3.8,1.5,0],4,profileColor,5.0)));
-var profile8 = T([0,1])([59,-12])(R([0,2])(-PI/2)(curvedProfile(0, PI/3, [0,0,0],[3.8,1.5,0],4,profileColor,5.0)));
-
-var leg1 = R([0,1])([PI/24])(straightLeg(4,[5,-2.5,-2],42.5, profileColor, true, 0));
-var leg2 = R([0,1])([PI/24])(straightLeg(4,[5,-2.5,40],42.5, profileColor, true, 0));
-var leg3 = straightLeg(4,[57,-13,-2],52.3, profileColor, true, 0);
-var leg4 = straightLeg(4,[57,-13,40],52.3, profileColor, true, 0);
-
-var backBar = R([1,2])(PI/2)(straightLeg(3,[4.5,0,-7],42, profileColor, false,0));
-var frontBar = T([0,1])([57,9])(R([1,2])(PI/2)(straightLeg(3,[0,0,0],42, profileColor, false,0)));
-
-var chassis = STRUCT([profile1,profile2,profile3,profile4,profile5,profile6,profile7,profile8, stopper1, stopper2, stopper3, stopper4, leg1, leg2, leg3, leg4, frontBar, backBar]);
+var stopperColor = [0,0,0,1];
 
 var bStick = R([0,2])(PI/2)(stick(stickColor));
 var oneSpring = STRUCT([spring(springPieces, springColor), T([0,1,2])([6,0.4,-3.5])(CYL_SURFACE([0.4,4])([8,2]))]);
 var twoSprings = COLOR(rgb01(163,163,163))(STRUCT([oneSpring,T([2])([80])(R([1,2])(PI)(oneSpring))]));
-var completeStick = S([0,1,2])([0.28,0.28,0.46])(R([0,1])([-PI/2])(STRUCT([twoSprings, bStick])));
-var completeStick2 = S([0,1,2])([0.28,0.28,0.46])(STRUCT([twoSprings, bStick]));
-var completeStick3 = S([0,1,2])([0.65,0.24,0.24])(R([0,2])([PI/2])(STRUCT([twoSprings, bStick])));
+var completeStick = R([0,2])(PI)(S([0,1,2])([0.46,0.25,0.25])(R([0,2])([PI/2])(STRUCT([twoSprings, bStick]))));
+var completeStick2 = R([0,1])(-PI/2)(S([0,1,2])([0.25,0.25,0.52])(STRUCT([twoSprings, bStick])));
+var completeStick3 = S([0,1,2])([0.25,0.25,0.52])(STRUCT([twoSprings, bStick]));
 
-var stick = T([0,1,2])([3.7,-2,2.9])(completeStick);
 
-//var mod = R([1,2])(-PI/2)(STRUCT([frontSticks, topSticks, sideSticks, chassis]));
-var model = chassis;
+var prof1 = straightLeg(4, [0,0,0], 80, profileColor, false, 0)
+var prof2 = straightLeg(4, [42,0,0], 80, profileColor, false, 0)
+var prof3 = straightLeg(4, [0,78,0], 42, profileColor, false, PI/2)
+var prof4 = R([0,2])(PI)(curvedProfile(0, PI/2, [0,1,-4],[0,0,0],4,profileColor,5.0));
+var prof5 = curvedProfile(0, PI/2, [42,1,0],[0,0,0],4,profileColor,5.0);
+var prof6 = straightLeg(4, [38.343124242662476,-2.656875757337522,0],-34.68, profileColor, false, PI/2);
 
-if(putParquet){
-	var parquet = parquet();
-	model = STRUCT([mod, T([0,1,2])([-30,-60,-42])(parquet)])
-}
-else
-	model = mod;
-*/
+var stick1 = T([0,1,2])([39.5,5,1.8])(completeStick)
+var stick2 = T([0,1,2])([39.5,10,1.8])(completeStick)
+var stick3 = T([0,1,2])([39.5,15,1.8])(completeStick)
+var stick4 = T([0,1,2])([39.5,20,1.8])(completeStick)
+var stick5 = T([0,1,2])([39.5,25,1.8])(completeStick)
+var stick6 = T([0,1,2])([39.5,30,1.8])(completeStick)
+var stick7 = T([0,1,2])([39.5,35,1.8])(completeStick)
+var stick8 = T([0,1,2])([39.5,40,1.8])(completeStick)
+var stick9 = T([0,1,2])([39.5,45,1.8])(completeStick)
+var stick10 = T([0,1,2])([39.5,50,1.8])(completeStick)
+
+var topChassisSticks = STRUCT([stick1, stick2, stick3, stick4, stick5, stick6, stick7, stick8, stick9, stick10])
+var topChassis = STRUCT([prof1, prof2, prof3, prof4, prof5, prof6]);
+var profileUp = STRUCT([topChassis,topChassisSticks]);
+
+var prof8 = curvedProfile(0, PI/2, [57,1,43],[0,0,0],4,profileColor,12.0);
+var prof9 = curvedProfile(0, PI/2, [57,1,-5],[0,0,0],4,profileColor,12.0);
+var prof10 = R([0,1])(-PI/12)(straightLeg(4, [-24.4,6.1,-5], 75, profileColor, false, PI/2));
+var prof11 = R([0,1])(-PI/12)(straightLeg(4, [-24.4,6.1,43], 75, profileColor, false, PI/2));
+var prof12 = R([0,1])(PI/2-PI/12)(curvedProfile(PI/3,0,[12.3,33.8,-5],[0,0,0],4,profileColor,12.0));
+var prof13 = R([0,1])(PI/2-PI/12)(curvedProfile(PI/3,0,[12.3,33.8,43],[0,0,0],4,profileColor,12.0));
+var leg1 = straightLeg(4,[-29.141045910999983,19.13237859636788,-5] ,15, profileColor, true, 0);
+var leg2 = straightLeg(4,[-29.141045910999983,19.13237859636788,43] ,15, profileColor, true, 0);
+var leg3 = straightLeg(4,[57,0,-5],36, profileColor, true, 0);
+var leg4 = straightLeg(4,[57,0,43],36, profileColor, true, 0);
+var backBar = R([1,2])(PI/2)(straightLeg(3,[-28,-2,-20],46, profileColor, false,0));
+var frontBar = R([1,2])(PI/2)(straightLeg(3,[57,-2,-5],46, profileColor, false,0));
+
+var downChassis = STRUCT([prof8,prof9,prof10,prof11,prof12,prof13,leg1,leg2,leg3,leg4,backBar,frontBar])
+
+var stick11 = T([0,1])([28,-0.6])(completeStick2);
+var stick12 = T([0,1])([33,-1.9])(completeStick2);
+var stick13 = T([0,1])([38,-3.2])(completeStick2);
+var stick14 = T([0,1])([42,-4.5])(completeStick2);
+var stick15 = T([0,1])([47,-5.8])(completeStick2);
+var stick16 = T([0,1])([52,-6.5])(completeStick2);
+var stick17 = T([0,1])([55,-5])(completeStick3);
+var stick18 = T([0,1])([56,-1.5])(completeStick3);
+
+var downChassisSticks = STRUCT([stick11,stick12,stick13,stick14,stick15,stick16, stick17, stick18]);
+
+var model = R([1,2])(-PI/2)(STRUCT([downChassisSticks,downChassis, R([0,1])(-PI/5)(T([0,1,2])([15,-40,42])(R([0,2])(PI/2)(profileUp)))]));
+
 DRAW(model);
