@@ -126,7 +126,7 @@ function parquet(){
 				color = c1;
 			else
 				color = c2;
-			struct.push(COLOR(color)(T([0,1])([putBricks,i*4])(CUBOID([5,45,0.1]))));
+			struct.push(COLOR(color)(T([0,1])([putBricks,i*4])(CUBOID([5,4,0.1]))));
 			putBricks+=5;
 			c = c*(-1);
 		}

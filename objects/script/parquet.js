@@ -17,7 +17,7 @@ function parquet(){
 				color = c1;
 			else
 				color = c2;
-			struct.push(COLOR(color)(T([0,1])([putBricks,i*4])(CUBOID([5,45,1]))));
+			struct.push(COLOR(color)(T([0,1])([putBricks,i*4])(CUBOID([5,4,0.1]))));
 			putBricks+=5;
 			c = c*(-1);
 		}
@@ -26,4 +26,4 @@ function parquet(){
 	return STRUCT(struct);
 }
 var parquet = parquet();
-DRAW(T([0,1,2])([-30,-60,-42])(parquet));
+DRAW(parquet);
