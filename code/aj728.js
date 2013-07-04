@@ -1,10 +1,14 @@
 $(document).ready(function() {
-	response = jQuery.get('/objects/script/728.js', function() {
-    	var scriptText = "<pre><code class=\"javascript\">"+response.responseText+"</code></pre>";
-		$('#content').html(scriptText);
-		hljs.initHighlightingOnLoad();
-	});
-	var scriptText = "<pre><code class=\"javascript\">"+response.responseText+"</code></pre>";
+	var response = jQuery.ajax({
+         url:    '/objects/script/728.js',
+         success: function(data) {
+                    	var scriptText = '<pre><code class="javascript">'+data+'</code></pre>';
+						$('#content').html(scriptText);
+						hljs.initHighlightingOnLoad();
+                  },
+         async:   false
+    });          
+    var scriptText = '<pre><code class="javascript">'+response.responseText+'</code></pre>';
 	$('#content').html(scriptText);
 	hljs.initHighlightingOnLoad();
 });
