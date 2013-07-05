@@ -111,14 +111,36 @@ function stick(color){
 	struct.push(MAP(BEZIER(S1)([c2[0],c2[1]]))(springDomain));
 	return COLOR(color)(STRUCT(struct));
 }
-
+function parquet(){
+	var c1 = rgb01(114,66,38);
+	var c2 = rgb01(120,66,38);
+	var struct = [];
+	var c = 1;
+	for(var i = 0; i<30; i++){
+		var putBricks = 0;
+		var color;
+		while(putBricks<120){
+			if(c>0)
+				color = c1;
+			else
+				color = c2;
+			struct.push(COLOR(color)(T([0,1])([putBricks,i*4])(CUBOID([5,45,0.1]))));
+			putBricks+=5;
+			c = c*(-1);
+		}
+		c= c*(-1);
+	}
+	return STRUCT(struct);
+}
+var putParquet = false;
 var chassisDomain = PROD1x1([INTERVALS(1)(6),INTERVALS(1)(6)]);
 var springDomain = PROD1x1([INTERVALS(1)(5),INTERVALS(1)(5)]);
 var springPieces = 80;
 var profileColor = rgb01(190,190,190);
 var stickColor = [0,0,0,1];
-var springColor = rgb01(160,160,160,1);
+var springColor = rgb01(160,160,160);
 var stopperColor = [0,0,0,1];
+var gearsColor = rgb01(200,200,200);
 
 var bStick = R([0,2])(PI/2)(stick(stickColor));
 var oneSpring = STRUCT([spring(springPieces, springColor), T([0,1,2])([6,0.4,-3.5])(CYL_SURFACE([0.4,4])([8,2]))]);
@@ -145,8 +167,11 @@ var stick7 = T([0,1,2])([39.5,35,1.8])(completeStick)
 var stick8 = T([0,1,2])([39.5,40,1.8])(completeStick)
 var stick9 = T([0,1,2])([39.5,45,1.8])(completeStick)
 var stick10 = T([0,1,2])([39.5,50,1.8])(completeStick)
+var stick10a = T([0,1,2])([39.5,55,1.8])(completeStick)
+var stick10b = T([0,1,2])([39.5,60,1.8])(completeStick)
 
-var topChassisSticks = STRUCT([stick1, stick2, stick3, stick4, stick5, stick6, stick7, stick8, stick9, stick10])
+
+var topChassisSticks = STRUCT([stick1, stick2, stick3, stick4, stick5, stick6, stick7, stick8, stick9, stick10,stick10a,stick10b])
 var topChassis = STRUCT([prof1, prof2, prof3, prof4, prof5, prof6]);
 var profileUp = STRUCT([topChassis,topChassisSticks]);
 
@@ -156,15 +181,22 @@ var prof10 = R([0,1])(-PI/12)(straightLeg(4, [-24.4,6.1,-5], 75, profileColor, f
 var prof11 = R([0,1])(-PI/12)(straightLeg(4, [-24.4,6.1,43], 75, profileColor, false, PI/2));
 var prof12 = R([0,1])(PI/2-PI/12)(curvedProfile(PI/3,0,[12.3,33.8,-5],[0,0,0],4,profileColor,12.0));
 var prof13 = R([0,1])(PI/2-PI/12)(curvedProfile(PI/3,0,[12.3,33.8,43],[0,0,0],4,profileColor,12.0));
-var leg1 = straightLeg(4,[-29.141045910999983,19.13237859636788,-5] ,15, profileColor, true, 0);
-var leg2 = straightLeg(4,[-29.141045910999983,19.13237859636788,43] ,15, profileColor, true, 0);
+var leg1 = straightLeg(4,[-29.141045910999983,19.13237859636788,-5] ,17, profileColor, true, 0);
+var leg2 = straightLeg(4,[-29.141045910999983,19.13237859636788,43] ,17, profileColor, true, 0);
 var leg3 = straightLeg(4,[57,0,-5],36, profileColor, true, 0);
 var leg4 = straightLeg(4,[57,0,43],36, profileColor, true, 0);
 var backBar = R([1,2])(PI/2)(straightLeg(3,[-28,-2,-20],46, profileColor, false,0));
 var frontBar = R([1,2])(PI/2)(straightLeg(3,[57,-2,-5],46, profileColor, false,0));
 
+var gear1 = straightLeg(3,[-28,21,-20],26,gearsColor,false,PI/2);
+var gear2 = straightLeg(2,[-2,21,-19.5],18,gearsColor,false,PI/2);
+var gears = T([0,2])([-2,2.6])(R([0,2])(-PI/32)(STRUCT([gear1,gear2])))
+
 var downChassis = STRUCT([prof8,prof9,prof10,prof11,prof12,prof13,leg1,leg2,leg3,leg4,backBar,frontBar])
 
+var stick11a = T([0,1])([13,3.3])(completeStick2);
+var stick11b = T([0,1])([18,2])(completeStick2);
+var stick11c = T([0,1])([23,0.7])(completeStick2);
 var stick11 = T([0,1])([28,-0.6])(completeStick2);
 var stick12 = T([0,1])([33,-1.9])(completeStick2);
 var stick13 = T([0,1])([38,-3.2])(completeStick2);
@@ -174,8 +206,15 @@ var stick16 = T([0,1])([52,-6.5])(completeStick2);
 var stick17 = T([0,1])([55,-5])(completeStick3);
 var stick18 = T([0,1])([56,-1.5])(completeStick3);
 
-var downChassisSticks = STRUCT([stick11,stick12,stick13,stick14,stick15,stick16, stick17, stick18]);
+var downChassisSticks = STRUCT([stick11,stick11a,stick11b,stick11c,stick12,stick13,stick14,stick15,stick16, stick17, stick18]);
 
-var model = R([1,2])(-PI/2)(STRUCT([downChassisSticks,downChassis, R([0,1])(-PI/5)(T([0,1,2])([15,-40,42])(R([0,2])(PI/2)(profileUp)))]));
+var mod = R([1,2])(-PI/2)(STRUCT([downChassis,downChassisSticks, R([0,1])(-PI/4)(T([0,1,2])([0,-56,42])(R([0,2])(PI/2)(profileUp)))]));
 
+var model;
+if(putParquet){
+	var parquet = parquet();
+	model = STRUCT([mod, T([0,1,2])([-40,-60,-37.3])(parquet),gears])
+}
+else
+	model = STRUCT([mod, gears])
 DRAW(model);
