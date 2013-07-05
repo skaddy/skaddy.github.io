@@ -134,13 +134,13 @@ function parquet(){
 	}
 	return STRUCT(struct);
 }
-var putParquet = true;
-var chassisDomain = PROD1x1([INTERVALS(1)(8),INTERVALS(1)(8)]);
+var putParquet = false;
+var chassisDomain = PROD1x1([INTERVALS(1)(6),INTERVALS(1)(6)]);
 var springDomain = PROD1x1([INTERVALS(1)(6),INTERVALS(1)(6)]);
 var springPieces = 100;
 var profileColor = rgb01(190,190,190);
 var stickColor = [0,0,0,1];
-var springColor = rgb01(160,160,160,1);
+var springColor = rgb01(160,160,160);
 var stopperColor = [0,0,0,1];
 
 var profile1 = curvedProfile(0, PI/2, [57,1,40],[50.5,0,0],4,profileColor,5.0);

@@ -143,13 +143,11 @@ function parquet(){
 
 var putParquet = false;
 var chassisDomain = PROD1x1([INTERVALS(1)(6),INTERVALS(1)(6)]);
-var springDomain = PROD1x1([INTERVALS(1)(6),INTERVALS(1)(6)]);
-if(putParquet)
-	springDomain = PROD1x1([INTERVALS(1)(5),INTERVALS(1)(5)]);
+var springDomain = PROD1x1([INTERVALS(1)(5),INTERVALS(1)(5)]);
 var springPieces = 80;
 var profileColor = rgb01(190,190,190);
 var stickColor = [0,0,0,1];
-var springColor = rgb01(160,160,160,1);
+var springColor = rgb01(160,160,160);
 var stopperColor = [0,0,0,1];
 
 var profile1 = straightLeg(4, [2.8431242426624763,-2.656875757337522,40], 54, profileColor, false, PI/2);
